@@ -1,6 +1,7 @@
 var gulp = require('gulp');
+var browserSync = require('browser-sync');
+var harp = require('harp');
 var sass = require('gulp-sass');
-var browserSync = require('browser-sync').create();
 var header = require('gulp-header');
 var cleanCSS = require('gulp-clean-css');
 var rename = require("gulp-rename");
@@ -16,32 +17,19 @@ var banner = ['/*!\n',
   ''
 ].join('');
 
-// Compiles SCSS files from /scss into /css
-gulp.task('sass', function() {
-  return gulp.src('public/scss/agency.scss')
-    .pipe(sass())
-    .pipe(header(banner, {
-      pkg: pkg
-    }))
-    .pipe(gulp.dest('public/css'))
-    .pipe(browserSync.reload({
-      stream: true
-    }))
-});
-
 // Minify compiled CSS
 gulp.task('minify-css', ['sass'], function() {
   return gulp.src('public/css/agency.css')
     .pipe(cleanCSS({
       compatibility: 'ie8'
     }))
+    .pipe(header(banner, {
+      pkg: pkg
+    }))
     .pipe(rename({
       suffix: '.min'
     }))
     .pipe(gulp.dest('public/css'))
-    .pipe(browserSync.reload({
-      stream: true
-    }))
 });
 
 // Minify custom JS
@@ -55,9 +43,6 @@ gulp.task('minify-js', function() {
       suffix: '.min'
     }))
     .pipe(gulp.dest('public/js'))
-    .pipe(browserSync.reload({
-      stream: true
-    }))
 });
 
 // Copy vendor files from /node_modules into /vendor
@@ -91,24 +76,43 @@ gulp.task('copy', function() {
     .pipe(gulp.dest('public/vendor/font-awesome'))
 })
 
-// Default task
-gulp.task('default', ['sass', 'minify-css', 'minify-js', 'copy']);
-
-// Configure the browserSync task
-gulp.task('browserSync', function() {
-  browserSync.init({
-    server: {
-      baseDir: 'public'
-    },
-  })
-})
-
-// Dev task with browserSync
-gulp.task('dev', ['browserSync', 'sass', 'minify-css', 'minify-js'], function() {
-  gulp.watch('scss/*.scss', ['sass']);
-  gulp.watch('css/*.css', ['minify-css']);
-  gulp.watch('js/*.js', ['minify-js']);
-  // Reloads the browser whenever HTML or JS files change
-  gulp.watch('*.html', browserSync.reload);
-  gulp.watch('js/**/*.js', browserSync.reload);
+/**
+ * Serve the Harp Site from the public directory
+ */
+gulp.task('dev', function() {
+    harp.server(__dirname + '/public', {
+      port: 9001
+    }, function() {
+        browserSync({
+          proxy: "localhost:9001",
+          port: 9000,
+          open: false,
+          /* Hide the notification. It gets annoying */
+           notify: {
+            styles: ['opacity: 0', 'position: absolute']
+          }
+        });
+        /**
+         * Watch for scss changes, tell BrowserSync to refresh agency.css
+         */
+        gulp.watch("public/css/*.scss", function() {
+          browserSync.reload("agency.css", { stream: true });
+        });
+        /**
+         * Watch for all other changes, reload the whole page
+         */
+        gulp.watch([
+          "public/**/*.ejs",
+          "public/**/*.json",
+          "public/js/agency.js"
+        ], function() {
+          browserSync.reload();
+        });
+    })
 });
+
+/**
+ * Default task, running just `gulp` will compile the sass,
+ * compile the harp site, launch BrowserSync & watch files.
+ */
+gulp.task('default', ['dev']);
