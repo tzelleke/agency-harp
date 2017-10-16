@@ -1,7 +1,7 @@
 {
     "title": "Agency",
-    "name": "startbootstrap-agency",
-    "version": "4.0.0-beta",
+    "name": "startbootstrap-agency-harpjs",
+    "version": "1.0.0",
     "description": "Agency is a one page HTML theme for Bootstrap.",
     "keywords": [
         "css",
@@ -11,19 +11,10 @@
         "theme",
         "template"
     ],
-    "homepage": "https://startbootstrap.com/template-overviews/agency",
-    "bugs": {
-        "url": "https://github.com/BlackrockDigital/startbootstrap-agency/issues",
-        "email": "feedback@startbootstrap.com"
-    },
     "license": "MIT",
-    "author": "Start Bootstrap",
-    "contributors": [
-        "David Miller (http://davidmiller.io/)"
-    ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/BlackrockDigital/startbootstrap-agency.git"
+        "url": "https://github.com/tzelleke/startbootstrap-agency-harpjs.git"
     },
     "dependencies": {
         "bootstrap": "^4.0.0-beta",
