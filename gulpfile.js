@@ -19,7 +19,7 @@ var banner = ['/*!\n',
 
 // Minify compiled CSS
 gulp.task('minify-css', ['sass'], function() {
-  return gulp.src('public/css/agency.css')
+  return gulp.src('src/css/agency.css')
     .pipe(cleanCSS({
       compatibility: 'ie8'
     }))
@@ -29,12 +29,12 @@ gulp.task('minify-css', ['sass'], function() {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('public/css'))
+    .pipe(gulp.dest('src/css'))
 });
 
 // Minify custom JS
 gulp.task('minify-js', function() {
-  return gulp.src('public/js/agency.js')
+  return gulp.src('src/js/agency.js')
     .pipe(uglify())
     .pipe(header(banner, {
       pkg: pkg
@@ -42,7 +42,7 @@ gulp.task('minify-js', function() {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('public/js'))
+    .pipe(gulp.dest('src/js'))
 });
 
 // Copy vendor files from /node_modules into /vendor
@@ -54,16 +54,16 @@ gulp.task('copy', function() {
       '!**/bootstrap-theme.*',
       '!**/*.map'
     ])
-    .pipe(gulp.dest('public/vendor/bootstrap'))
+    .pipe(gulp.dest('src/vendor/bootstrap'))
 
   gulp.src(['node_modules/jquery/dist/jquery.js', 'node_modules/jquery/dist/jquery.min.js'])
-    .pipe(gulp.dest('public/vendor/jquery'))
+    .pipe(gulp.dest('src/vendor/jquery'))
 
   gulp.src(['node_modules/popper.js/dist/umd/popper.js', 'node_modules/popper.js/dist/umd/popper.min.js'])
-    .pipe(gulp.dest('public/vendor/popper'))
+    .pipe(gulp.dest('src/vendor/popper'))
 
   gulp.src(['node_modules/jquery.easing/*.js'])
-    .pipe(gulp.dest('public/vendor/jquery-easing'))
+    .pipe(gulp.dest('src/vendor/jquery-easing'))
 
   gulp.src([
       'node_modules/font-awesome/**',
@@ -73,14 +73,14 @@ gulp.task('copy', function() {
       '!node_modules/font-awesome/*.md',
       '!node_modules/font-awesome/*.json'
     ])
-    .pipe(gulp.dest('public/vendor/font-awesome'))
+    .pipe(gulp.dest('src/vendor/font-awesome'))
 })
 
 /**
- * Serve the Harp Site from the public directory
+ * Serve the Harp Site from the src directory
  */
 gulp.task('dev', function() {
-    harp.server(__dirname + '/public', {
+    harp.server(__dirname + '/src', {
       port: 9001
     }, function() {
         browserSync({
@@ -95,16 +95,16 @@ gulp.task('dev', function() {
         /**
          * Watch for scss changes, tell BrowserSync to refresh agency.css
          */
-        gulp.watch("public/css/*.scss", function() {
+        gulp.watch("src/css/*.scss", function() {
           browserSync.reload("agency.css", { stream: true });
         });
         /**
          * Watch for all other changes, reload the whole page
          */
         gulp.watch([
-          "public/**/*.ejs",
-          "public/**/*.json",
-          "public/js/agency.js"
+          "src/**/*.ejs",
+          "src/**/*.json",
+          "src/js/agency.js"
         ], function() {
           browserSync.reload();
         });
