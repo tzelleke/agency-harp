@@ -65,15 +65,10 @@ gulp.task('copy', function() {
   gulp.src(['node_modules/jquery.easing/*.js'])
     .pipe(gulp.dest('src/vendor/jquery-easing'))
 
-  gulp.src([
-      'node_modules/font-awesome/**',
-      '!node_modules/font-awesome/**/*.map',
-      '!node_modules/font-awesome/.npmignore',
-      '!node_modules/font-awesome/*.txt',
-      '!node_modules/font-awesome/*.md',
-      '!node_modules/font-awesome/*.json'
-    ])
-    .pipe(gulp.dest('src/vendor/font-awesome'))
+  gulp.src(['node_modules/font-awesome/css/*.css'])
+    .pipe(gulp.dest('src/vendor/font-awesome/css'))
+  gulp.src(['node_modules/font-awesome/fonts/*'])
+    .pipe(gulp.dest('src/vendor/font-awesome/fonts'))
 })
 
 /**
