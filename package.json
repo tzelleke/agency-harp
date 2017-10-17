@@ -1,6 +1,6 @@
 {
     "title": "Agency",
-    "name": "startbootstrap-agency-harpjs",
+    "name": "agency-harp",
     "version": "1.0.0",
     "description": "Agency is a one page HTML theme for Bootstrap.",
     "keywords": [
@@ -14,7 +14,7 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/tzelleke/startbootstrap-agency-harpjs.git"
+        "url": "https://github.com/tzelleke/agency-harp.git"
     },
     "dependencies": {
         "bootstrap": "^4.0.0-beta",
