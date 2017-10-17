@@ -4,8 +4,8 @@ var harp = require('harp');
 var sass = require('gulp-sass');
 var header = require('gulp-header');
 var cleanCSS = require('gulp-clean-css');
-var rename = require("gulp-rename");
 var uglify = require('gulp-uglify');
+var del = require('del');
 var pkg = require('./package.json');
 
 // Set the banner content
@@ -17,32 +17,31 @@ var banner = ['/*!\n',
   ''
 ].join('');
 
+// Clean dist directory
+gulp.task('clean', function() {
+  return del(['dist']);
+});
+
 // Minify compiled CSS
-gulp.task('minify-css', ['sass'], function() {
-  return gulp.src('src/css/agency.css')
+gulp.task('minify-css', ['compile'], function() {
+  return gulp.src('dist/css/agency.css')
     .pipe(cleanCSS({
       compatibility: 'ie8'
     }))
     .pipe(header(banner, {
       pkg: pkg
     }))
-    .pipe(rename({
-      suffix: '.min'
-    }))
-    .pipe(gulp.dest('src/css'))
+    .pipe(gulp.dest('dist/css'));
 });
 
 // Minify custom JS
-gulp.task('minify-js', function() {
-  return gulp.src('src/js/agency.js')
+gulp.task('minify-js', ['compile'], function() {
+  return gulp.src('dist/js/agency.js')
     .pipe(uglify())
     .pipe(header(banner, {
       pkg: pkg
     }))
-    .pipe(rename({
-      suffix: '.min'
-    }))
-    .pipe(gulp.dest('src/js'))
+    .pipe(gulp.dest('dist/js'));
 });
 
 // Copy vendor files from /node_modules into /vendor
@@ -54,30 +53,44 @@ gulp.task('copy', function() {
       '!**/bootstrap-theme.*',
       '!**/*.map'
     ])
-    .pipe(gulp.dest('src/vendor/bootstrap'))
+    .pipe(gulp.dest('src/vendor/bootstrap'));
 
   gulp.src(['node_modules/jquery/dist/jquery.js', 'node_modules/jquery/dist/jquery.min.js'])
-    .pipe(gulp.dest('src/vendor/jquery'))
+    .pipe(gulp.dest('src/vendor/jquery'));
 
   gulp.src(['node_modules/popper.js/dist/umd/popper.js', 'node_modules/popper.js/dist/umd/popper.min.js'])
-    .pipe(gulp.dest('src/vendor/popper'))
+    .pipe(gulp.dest('src/vendor/popper'));
 
   gulp.src(['node_modules/jquery.easing/*.js'])
-    .pipe(gulp.dest('src/vendor/jquery-easing'))
+    .pipe(gulp.dest('src/vendor/jquery-easing'));
 
   gulp.src(['node_modules/font-awesome/css/*.css'])
-    .pipe(gulp.dest('src/vendor/font-awesome/css'))
+    .pipe(gulp.dest('src/vendor/font-awesome/css'));
   gulp.src(['node_modules/font-awesome/fonts/*'])
-    .pipe(gulp.dest('src/vendor/font-awesome/fonts'))
+    .pipe(gulp.dest('src/vendor/font-awesome/fonts'));
 })
+
+/**
+ * Compile the Harp Site from the src to dist directory
+ */
+gulp.task('compile', function(done) {
+    harp.compile(
+      __dirname + '/src',
+      __dirname + '/dist',
+      done
+    );
+});
 
 /**
  * Serve the Harp Site from the src directory
  */
 gulp.task('dev', function() {
-    harp.server(__dirname + '/src', {
-      port: 9001
-    }, function() {
+    harp.server(
+      __dirname + '/src',
+      {
+        port: 9001
+      },
+      function() {
         browserSync({
           proxy: "localhost:9001",
           port: 9000,
@@ -111,3 +124,8 @@ gulp.task('dev', function() {
  * compile the harp site, launch BrowserSync & watch files.
  */
 gulp.task('default', ['dev']);
+
+/**
+ * Build site for production.
+ */
+gulp.task('build', ['clean', 'compile', 'minify-css', 'minify-js']);
