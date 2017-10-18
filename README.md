@@ -5,6 +5,7 @@ This fork integrates [Agency](https://startbootstrap.com/template-overviews/agen
 The Agency theme was created by [Start Bootstrap](http://startbootstrap.com/) and features several content sections, a responsive portfolio grid with hover effects, full page portfolio item modals, a responsive timeline, and a working PHP contact form.
 
 The content sections of the theme have been refactored into [EJS](http://harpjs.com/docs/development/ejs) partials under `src/_partials`.
+Sitewide data is extracted from the markup and stored as JSON in `src/_data.json`. 
 
 ## Usage
 
